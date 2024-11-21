@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import clsx from 'clsx';
 
 import { ArrowButton } from 'src/ui/arrow-button';
@@ -7,6 +7,8 @@ import { Text } from 'src/ui/text';
 import { Select } from 'src/ui/select';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
+
+import { useClose } from 'src/hooks/userClose';
 
 import {
 	defaultArticleState,
@@ -49,22 +51,11 @@ export const ArticleParamsForm: FC<ArticleParamsFormProps> = ({
 		setFormSettings(defaultArticleState);
 	};
 
-	useEffect(() => {
-		if (!isSidebarOpen) return;
-
-		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				sidebarRef.current &&
-				!sidebarRef.current.contains(event.target as Node)
-			) {
-				toggleSidebar();
-			}
-		};
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
-		};
-	}, [isSidebarOpen, toggleSidebar]);
+	useClose({
+		isOpen: isSidebarOpen,
+		onClose: () => setIsSidebarOpen(false),
+		rootRef: sidebarRef,
+	});
 
 	return (
 		<>
